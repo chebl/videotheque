@@ -32,8 +32,7 @@ class FilmController extends AbstractController
     public function index(): Response
     {
 
-        $films = $this->entityManager->getRepository(Film::class)->findAll();
-
+        $films = $this->filmRepository->findAll();
 
         return $this->render('film/index.html.twig', [
             'films' => $films,
@@ -43,21 +42,24 @@ class FilmController extends AbstractController
     #[Route('/add-film', name: 'vid_add_film')]
     public function add(Request $request, Mail $mail): Response
     {
-        $form = $this->createForm(FilmType::class);
+        $film = new Film();
+        $form = $this->createForm(FilmType::class, $film);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            //Save the Film 
-            $film = $form->getData();
-            /* 
+        
+        if ($form->isSubmitted() === true && $form->isValid() === true) {
+            //Save the Film
+            // je n'ai pas bien compris pourquoi tu as ajouté des categories sans l'assicier au film !!
             $cat=new Category();
             $cat->setName('Action');
             $this->categoryRepository->add($cat,true);
             $cat=new Category();
             $cat->setName('Comedy');
-              $this->categoryRepository->add($cat,true);
-             die;*/
+            $this->categoryRepository->add($cat,true);
+
+            // persiste film
             $this->filmRepository->add($film, true);
             $this->addFlash('success', 'Film ajouté avec Success');
+            
             //send Email to ADMIN
             $from = 'chebl.mahmoud@gmail.com';
             $to = $this->getParameter('app.admin_email');
@@ -66,6 +68,7 @@ class FilmController extends AbstractController
             $mail->sendEmail($to, $from, $subject, $content);
             $this->redirectToRoute('vid_films');
         }
+        
         return $this->render('film/add.html.twig', [
             'form' => $form->createView(),
         ]);
