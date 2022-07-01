@@ -28,7 +28,7 @@ class FilmController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/films', name: 'app_film')]
+    #[Route('/films', name: 'vid_films')]
     public function index(): Response
     {
 
@@ -40,7 +40,7 @@ class FilmController extends AbstractController
         ]);
     }
 
-    #[Route('/add-film', name: 'app_add_film')]
+    #[Route('/add-film', name: 'vid_add_film')]
     public function add(Request $request, Mail $mail): Response
     {
         $form = $this->createForm(FilmType::class);
@@ -64,7 +64,7 @@ class FilmController extends AbstractController
             $subject = "VideoTheque Update";
             $content = 'New film added !';
             $mail->sendEmail($to, $from, $subject, $content);
-            $this->redirectToRoute('app_film');
+            $this->redirectToRoute('vid_films');
         }
         return $this->render('film/add.html.twig', [
             'form' => $form->createView(),
