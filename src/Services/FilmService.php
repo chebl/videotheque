@@ -21,14 +21,18 @@ class FilmService
     }
 
     public function getFilmsByTitle($title)
-    {
+    { 
         return $this->filmRepository->findBy(['title' => $title]);
     }
     public function getFilmsByCategory($category)
     {
         return $this->filmRepository->findBy(['category' => $category]);
     }
-
+    
+    public function getNbreOfFilms()
+    {
+        return $this->filmRepository->getNbreOfFilms(); 
+    }
     public function save(Film $film)
     {
         $this->filmRepository->add($film, true);

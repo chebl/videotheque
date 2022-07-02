@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
@@ -17,6 +18,9 @@ class Mail
             ->to($to_email)
             ->subject($subject)
             ->text($content);
-        $mailer->send($email);
+         try {
+            $mailer->send($email);
+         }
+         catch(Exception $e){}
     }
 }

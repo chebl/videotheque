@@ -6,9 +6,10 @@ use App\Entity\Film;
 use App\Form\FilmType;
 use App\Services\Mail;
 use App\Entity\Category;
+use App\Services\FilmService;
 use App\Repository\FilmRepository;
 use App\Repository\CategoryRepository;
-use App\Services\FilmService;
+use App\Services\FilmCountTotalService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +31,7 @@ class FilmController extends AbstractController
     }
 
     #[Route('/add_film', name: 'vid_add_film')]
-    public function add(Request $request, Mail $mail, FilmService $filmService): Response
+    public function add(Request $request, Mail $mail, FilmService $filmService,FilmCountTotalService $filmCountTotalService): Response
     {
         $film = new Film();
         $form = $this->createForm(FilmType::class, $film);
@@ -48,14 +49,16 @@ class FilmController extends AbstractController
              die;*/
 
             $filmService->save($film);
-            $this->addFlash('success', 'Film ajouté avec Success');
+           //Increment Nbre of Films saved
+           $filmCountTotalService->setTotalFilms($filmService);
+
             //send Email to ADMIN
             $from = 'chebl.mahmoud@gmail.com';
             $to = $this->getParameter('app.admin_email');
             $subject = "VideoTheque Update";
             $content = 'New film added !';
             $mail->sendEmail($to, $from, $subject, $content);
-            $this->redirectToRoute('vid_films');
+            return $this->redirectToRoute('vid_films');
         }
         return $this->render('film/add.html.twig', [
             'form' => $form->createView(),
@@ -78,11 +81,13 @@ class FilmController extends AbstractController
     }
 
     #[Route('/delete_film/{id}', name: 'vid_delete_film')]
-    public function delete(Film $film, FilmService $filmService): Response
-    {
+    public function delete(Film $film, FilmService $filmService,FilmCountTotalService $filmCountTotalService): Response
+    { 
         $filmService->delete($film);
+        //Decrement Nbre of Films saved
+        $filmCountTotalService->setTotalFilms($filmService);
         return $this->redirectToRoute('vid_films');
     }
-
+   
 
 }

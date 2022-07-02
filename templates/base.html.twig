@@ -22,8 +22,11 @@
   <a href="{{ path('vid_add_film')}}">Ajouter un Film</a>
  <a href="{{ path('vid_list_category')}}">Catégories</a>
 </div>
+<br>
+ <center><h2>Nbre of Films: {{app.session.get('NombreofFilms')}}</h2></center>
+
     {% block body %}
-        
+       
         {% endblock %}
     </body>
 </html>
