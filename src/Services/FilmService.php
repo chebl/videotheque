@@ -19,12 +19,21 @@ class FilmService
     {
         return $this->filmRepository->findAll();
     }
-   
+
+    public function getFilmsByTitle($title)
+    {
+        return $this->filmRepository->findBy(['title' => $title]);
+    }
+    public function getFilmsByCategory($category)
+    {
+        return $this->filmRepository->findBy(['category' => $category]);
+    }
+
     public function save(Film $film)
     {
         $this->filmRepository->add($film, true);
     }
-     public function delete(Film $film)
+    public function delete(Film $film)
     {
         $this->filmRepository->remove($film, true);
     }
