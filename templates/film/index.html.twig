@@ -4,7 +4,6 @@
 
 {% block body %}
 
-
 <div class="example-wrapper">
   
 <table border="1">
@@ -23,9 +22,9 @@
 <td>{{ film.title}}</td>
 <td>{{ film.description}}</td>
 <td>{{ film.category}}</td>
-<td><a href="">Edit</a>|<a href="">Delete</a></td>
+<td><a href="{{ path('vid_edit_film',{'id':film.id}) }}">Edit</a>|<a href="{{ path('vid_delete_film',{'id':film.id}) }}">Delete</a></td>
 
-</tr>
+</tr> 
 {% endfor %}
 </tbody>
 </table>

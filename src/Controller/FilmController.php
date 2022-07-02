@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use App\Lib\Mail;
 use App\Entity\Film;
 use App\Form\FilmType;
+use App\Services\Mail;
 use App\Entity\Category;
 use App\Repository\FilmRepository;
 use App\Repository\CategoryRepository;
+use App\Services\FilmService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,34 +17,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class FilmController extends AbstractController
 {
-    private $filmRepository;
-    private $categoryRepository;
-    private $entityManager;
-
-    public function __construct(FilmRepository $filmRepository, CategoryRepository $categoryRepository, EntityManagerInterface $entityManager)
-    {
-        $this->filmRepository = $filmRepository;
-        $this->categoryRepository = $categoryRepository;
-
-        $this->entityManager = $entityManager;
-    }
 
     #[Route('/films', name: 'vid_films')]
-    public function index(): Response
+    public function index(FilmService $filmService): Response
     {
 
-        $films = $this->entityManager->getRepository(Film::class)->findAll();
-
+        $films = $filmService->getAll();
 
         return $this->render('film/index.html.twig', [
             'films' => $films,
         ]);
     }
 
-    #[Route('/add-film', name: 'vid_add_film')]
-    public function add(Request $request, Mail $mail): Response
+    #[Route('/add_film', name: 'vid_add_film')]
+    public function add(Request $request, Mail $mail, FilmService $filmService): Response
     {
-        $form = $this->createForm(FilmType::class);
+        $film = new Film();
+        $form = $this->createForm(FilmType::class, $film);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             //Save the Film 
@@ -56,7 +46,8 @@ class FilmController extends AbstractController
             $cat->setName('Comedy');
               $this->categoryRepository->add($cat,true);
              die;*/
-            $this->filmRepository->add($film, true);
+
+            $filmService->save($film);
             $this->addFlash('success', 'Film ajouté avec Success');
             //send Email to ADMIN
             $from = 'chebl.mahmoud@gmail.com';
@@ -70,4 +61,28 @@ class FilmController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/edit_film/{id}', name: 'vid_edit_film')]
+    public function edit(Request $request, Film $film, FilmService $filmService): Response
+    {
+        $form = $this->createForm(FilmType::class, $film);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $filmService->save($film);
+            return $this->redirectToRoute('vid_films');
+        }
+        return $this->render('film/add.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/delete_film/{id}', name: 'vid_delete_film')]
+    public function delete(Film $film, FilmService $filmService): Response
+    {
+        $filmService->delete($film);
+        return $this->redirectToRoute('vid_films');
+    }
+
+
 }
