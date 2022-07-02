@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List Categories!{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+  
+<table border="1">
+<thead>
+<tr>
+<th>Category Name</th>
+<th>Actions</th>
+
+</tr>
+</thead>
+<tbody>
+{% for category in categories %}
+<tr>
+<td>{{ category.name}}</td>
+<td><a href="{{ path('vid_get_films',{'id':category.id}) }}">View Films</a></td>
+
+</tr> 
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+{% endblock %}

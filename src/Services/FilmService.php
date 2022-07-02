@@ -8,6 +8,8 @@ use App\Repository\FilmRepository;
 class FilmService
 {
 
+    private $filmRepository;
+
     public function __construct(FilmRepository $filmRepository)
     {
         $this->filmRepository = $filmRepository;
@@ -17,7 +19,7 @@ class FilmService
     {
         return $this->filmRepository->findAll();
     }
-
+   
     public function save(Film $film)
     {
         $this->filmRepository->add($film, true);

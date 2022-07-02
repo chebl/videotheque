@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}List Films!{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+  
+<table border="1">
+<thead>
+<tr>
+<th>Title</th>
+<th>Description</th>
+<th>Category</th>
+<th>Actions</th>
+
+</tr>
+</thead>
+<tbody> 
+{% for film in films.getFilms()  %}
+<tr>
+<td>{{ film.title}}</td>
+<td>{{ film.description}}</td>
+<td>{{ film.category}}</td>
+<td><a href="{{ path('vid_edit_film',{'id':film.id}) }}">Edit</a>|<a href="{{ path('vid_delete_film',{'id':film.id}) }}">Delete</a></td>
+
+</tr> 
+{% endfor %}
+</tbody>
+</table>
+
+</div>
+{% endblock %}
